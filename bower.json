@@ -1,0 +1,10 @@
+{
+  "name": "meteor-cryptogram",
+  "version": "0.0.1",
+  "dependencies": {
+    "angular-ui-router": "0.2.13",
+    "angular-bootstrap": "~0.12.0",
+    "sprintf": "~1.0.2"
+  },
+  "private": true
+}
