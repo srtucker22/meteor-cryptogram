@@ -24,7 +24,7 @@
           <a class="navbar-brand" ui-sref="dashboard">
             <img alt="Brand" src="/assets/cryptogram-shield.png" width="38px" height="40px">
           </a>
-          <button ng-show="currentUser" type="button" class="navbar-toggle collapsed" data-toggle="collapse" ng-click="revealCollapsed = !revealCollapsed">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" ng-click="revealCollapsed = !revealCollapsed">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -38,7 +38,7 @@
                 {{currentUser.profile.name}}
               </a>
               <ul class="dropdown-menu" ng-show="currentUser">
-                <li><a href ng-click="logout()">Logout</a></li>
+                <li><a href ng-click="logout()">logout</a></li>
               </ul>
             </li>
             <li class="dropdown" ng-show="!currentUser && !loggingIn">
