@@ -1,4 +1,4 @@
-angular.module("app").run(['$rootScope', '$state', function($rootScope, $state) {
+angular.module("app").run(['$rootScope', '$state', '$meteorSubscribe', function($rootScope, $state, $meteorSubscribe) {
 
   $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error){ 
     // console.log(event);
@@ -15,7 +15,20 @@ angular.module("app").run(['$rootScope', '$state', function($rootScope, $state) 
     }
   });
 
+  $rootScope.$watch('currentUser', function(currentUser, previousState){
+    if(currentUser && !$rootScope.subscriptionHandle){
+      $meteorSubscribe.subscribe('my_data').then(function(subscriptionHandle){
+        $rootScope.subscriptionHandle = subscriptionHandle;
+        $rootScope.$broadcast('currentUser');
+      });
+    }else if(!currentUser){
+      $rootScope.subscriptionHandle = null;
+      $rootScope.$broadcast('currentUser');
+    }
+  });
+
   $rootScope.logout = function(){
+    console.log('logging out');
     if($rootScope.currentUser){
       Meteor.logout(function(error){
         if(error){

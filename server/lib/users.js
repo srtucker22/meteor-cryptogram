@@ -138,6 +138,9 @@ Meteor.users.allow({
 
   update: function(userId, user, fields, modifier) {
     if(userId === user._id || Roles.userIsInRole(userId, ['manage-users','admin'])){
+      if(_.contains(fields, 'hints')){
+        return false;
+      }
       return true;
     }else{
       return false;

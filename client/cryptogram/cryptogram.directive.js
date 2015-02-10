@@ -5,22 +5,41 @@
 
   function cryptogramDirective(cryptogramService) {
     this.link = function(scope, element, attrs) {
+      scope.code = {};
       scope.maxLineChars = attrs.maxLineChars? attrs.maxLineChars:20;
-
       scope.letterIndexMap = cryptogramService.getLetterIndexMap(scope.puzzle);
-      
+
+      if(scope.solution){
+        _.each(scope.solution, function(c, index){
+          if(cryptogramService.isLetter(c)){
+            scope.code[scope.puzzle[index]] = c;
+          }
+        });
+      }
+
       scope.$watch('puzzle', function(puzzle){
         refreshView(puzzle);
       });
-      
-      scope.code = cryptogramService.getEmptyCode(scope.puzzle);
+
+      scope.$on('hint', function(event, hint){
+        scope.code[scope.puzzle[hint.index]] = hint.letter;
+      });
+
+      scope.$on('answer', function(event, answer){
+        _.each(answer, function(c, index){
+          if(cryptogramService.isLetter(c)){
+            scope.code[scope.puzzle[index]] = c;
+          }
+        });
+      });
 
       scope.remainingLetters = function(){
         return _.difference('abcdefghijklmnopqrstuvwxyz', _.values(scope.code)).join(' ');
       };
 
-      // look for invalid characters when the model changes
+      // update the solution, look for invalid characters when the model changes
       scope.$watchCollection('code', function(code){
+        scope.solution = updateSolution(code);
         scope.invalidCharacters = _.object(_.map(cryptogramService.getInvalidCharacters(scope.code), function(o){
           return [o, true];
         }));
@@ -54,13 +73,11 @@
         // }, 1);
       }
 
-      scope.submit = function(){
-        console.log(cryptogramService.checkSolution(scope.answer, scope.code));
-      };
-
-      scope.hint = function(){
-        console.log("hint");
-      };
+      function updateSolution(code){
+        return _.map(scope.puzzle, function(c){
+          return code[c]? code[c]: (cryptogramService.isLetter(c)? ' ': c);
+        }).join("");
+      }
     };
     
     return {
@@ -72,7 +89,7 @@
       controller: cryptogramDirectiveController,
       scope: {
         puzzle: "=puzzle",
-        answer: "@answer"
+        solution: "=solution"
       }
     };
   }
