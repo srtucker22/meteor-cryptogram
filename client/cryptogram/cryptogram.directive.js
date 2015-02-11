@@ -1,12 +1,12 @@
 (function(){
   angular.module("app").directive('cryptogram', cryptogramDirective);
 
-  cryptogramDirective.$inject = ['cryptogramService'];
+  cryptogramDirective.$inject = ['$compile', 'cryptogramService'];
 
-  function cryptogramDirective(cryptogramService) {
+  function cryptogramDirective($compile, cryptogramService) {
     this.link = function(scope, element, attrs) {
+      scope.settings = {};
       scope.code = {};
-      scope.maxLineChars = attrs.maxLineChars? attrs.maxLineChars:20;
       scope.letterIndexMap = cryptogramService.getLetterIndexMap(scope.puzzle);
 
       if(scope.solution){
@@ -19,6 +19,13 @@
 
       scope.$watch('puzzle', function(puzzle){
         refreshView(puzzle);
+      });
+
+      attrs.$observe('maxLineChars', function(maxLineChars){
+        scope.maxLineChars = maxLineChars;
+        scope.letterWidth = Math.floor(100/scope.maxLineChars);
+        refreshView(scope.puzzle);
+        scope.settings.recompileBool = true;
       });
 
       scope.$on('hint', function(event, hint){
@@ -149,5 +156,52 @@
         return link;
       }
     };
+  }
+
+  angular.module('app').directive('recompile', recompileDirective);
+
+  recompileDirective.$inject = ['$compile', '$parse'];
+
+  function recompileDirective($compile, $parse) {
+    'use strict';
+   
+    return {
+      scope: true, // required to be able to clear watchers safely
+      compile: function(el) {
+        var template = el.html();
+        return function link(scope, $el, attrs) {
+          scope.$parent.$watch(attrs.recompile, function(_new, _old) {
+            var useBoolean = attrs.hasOwnProperty('useBoolean');
+            if ((useBoolean && (!_new || _new === 'false')) || (!useBoolean && (!_new || _new === _old))) {
+              return;
+            }
+
+            // remove all watchers because the recompiled version will set them up again.
+            removeChildrenWatchers($el);
+            // reset Recompile to false if we're using a boolean
+            if (useBoolean) {
+              $parse(attrs.recompile).assign(scope.$parent, false);
+            }
+   
+            // recompile
+            var newEl = $compile(template)(scope.$parent.$new());
+            $el.html(newEl);
+          });
+        };
+      }
+    };
+   
+    function removeChildrenWatchers(element) {
+      angular.forEach(element.children(), function(childElement) {
+        removeAllWatchers(angular.element(childElement));
+      });
+    }
+   
+    function removeAllWatchers(element) {
+      if (element.data().hasOwnProperty('$scope')) {
+        element.data().$scope.$$watchers = [];
+      }
+      removeChildrenWatchers(element);
+    }
   }
 })();

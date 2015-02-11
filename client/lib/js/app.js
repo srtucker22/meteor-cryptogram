@@ -1,3 +1,3 @@
 (function(){
-  angular.module("app", ["angular-meteor", "ui.router", "ui.bootstrap"]);
+  angular.module("app", ["angular-meteor", "ui.router", "ui.bootstrap", "matchmedia-ng"]);
 })();

@@ -10,7 +10,7 @@
   </div>
   <div class="row" ng-if="dashboardctrl.cryptogram">
     <div class="col-xs-12 text-center">
-      <cryptogram puzzle="dashboardctrl.cryptogram.puzzle" solution="data.currentSolution"></cryptogram>
+      <cryptogram puzzle="dashboardctrl.cryptogram.puzzle" solution="data.currentSolution" max-line-chars="{{data.maxLineChars}}"></cryptogram>
     </div>
     <div class="col-xs-12 text-center" ng-hide="dashboardctrl.answer">
       <div class="btn btn-success" ng-click="dashboardctrl.submit()">submit</div>

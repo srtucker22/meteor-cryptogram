@@ -1,9 +1,9 @@
 (function(){
   angular.module("app").controller("DashboardCtrl", DashboardCtrl);
 
-  DashboardCtrl.$inject = ['$meteorMethods', '$rootScope', '$scope', 'cryptogramService'];
+  DashboardCtrl.$inject = ['$meteorMethods', '$rootScope', '$scope', 'cryptogramService', 'matchmedia'];
 
-  function DashboardCtrl($meteorMethods, $rootScope, $scope, cryptogramService){
+  function DashboardCtrl($meteorMethods, $rootScope, $scope, cryptogramService, matchmedia){
     var vm = this;
 
     vm.getCryptogram = getCryptogram;
@@ -11,7 +11,7 @@
     vm.giveUp = giveUp;
     vm.submit = submit;
     $scope.data = {
-      currentSolution: ''
+      currentSolution: '',
     };
     
     activate();
@@ -27,6 +27,17 @@
         if(vm.currentUser)
           Meteor.users.update({_id: vm.currentUser._id}, {$set: {'cryptograms.current.solution': $scope.data.currentSolution}});
       }, true);
+
+      matchmedia.onPhone(function(mediaQueryList){
+        if(mediaQueryList.matches){
+          $scope.data.maxLineChars = 16;
+        }
+      });
+
+      matchmedia.onDesktop(function(mediaQueryList){
+        if(mediaQueryList.matches)
+          $scope.data.maxLineChars = 20;
+      });
     }
 
     function getCryptogram(){
