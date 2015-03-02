@@ -4,99 +4,95 @@
   cryptogramDirective.$inject = ['$compile', 'cryptogramService'];
 
   function cryptogramDirective($compile, cryptogramService) {
-    this.link = function(scope, element, attrs) {
-      scope.settings = {};
-      scope.code = {};
-      scope.letterIndexMap = cryptogramService.getLetterIndexMap(scope.puzzle);
-
-      if(scope.solution){
-        _.each(scope.solution, function(c, index){
-          if(cryptogramService.isLetter(c)){
-            scope.code[scope.puzzle[index]] = c;
-          }
-        });
-      }
-
-      scope.$watch('puzzle', function(puzzle){
-        refreshView(puzzle);
-      });
-
-      attrs.$observe('maxLineChars', function(maxLineChars){
-        scope.maxLineChars = maxLineChars;
-        scope.letterWidth = Math.floor(100/scope.maxLineChars);
-        refreshView(scope.puzzle);
-        scope.settings.recompileBool = true;
-      });
-
-      scope.$on('hint', function(event, hint){
-        scope.code[scope.puzzle[hint.index]] = hint.letter;
-      });
-
-      scope.$on('answer', function(event, answer){
-        _.each(answer, function(c, index){
-          if(cryptogramService.isLetter(c)){
-            scope.code[scope.puzzle[index]] = c;
-          }
-        });
-      });
-
-      scope.remainingLetters = function(){
-        return _.difference('abcdefghijklmnopqrstuvwxyz', _.values(scope.code)).join(' ');
-      };
-
-      // update the solution, look for invalid characters when the model changes
-      scope.$watchCollection('code', function(code){
-        scope.solution = updateSolution(code);
-        scope.invalidCharacters = _.object(_.map(cryptogramService.getInvalidCharacters(scope.code), function(o){
-          return [o, true];
-        }));
-      });
-
-      function refreshView(puzzle){
-        var words = scope.puzzle.split(/[\s]+/);
-
-        scope.lines = [];
-        var counter = 0;
-        var currentLine = '';
-        _.each(words, function(word){
-          if(currentLine.length + word.length > scope.maxLineChars){
-            scope.lines.push(currentLine.slice(0,-1));
-            currentLine = word + ' ';
-            counter = word.length;
-          } else if(currentLine.length + word.length === scope.maxLineChars){
-            currentLine += word;
-            scope.lines.push(String(currentLine));
-            currentLine = '';
-          } else {
-            currentLine += word + ' ';
-          }
-        });
-        if(currentLine){
-          scope.lines.push(currentLine.slice(0,-1));
-        }
-
-        // setTimeout(function () {
-        //   $.autotab.refresh();
-        // }, 1);
-      }
-
-      function updateSolution(code){
-        return _.map(scope.puzzle, function(c){
-          return code[c]? code[c]: (cryptogramService.isLetter(c)? ' ': c);
-        }).join("");
-      }
-    };
-    
     return {
-      templateUrl: 'client/cryptogram/cryptogram-template.tpl',
-      restrict: 'EA',
-      compile: function(tElem){
-        return link;
-      },
       controller: cryptogramDirectiveController,
       scope: {
         puzzle: "=puzzle",
         solution: "=solution"
+      },
+      templateUrl: 'client/cryptogram/cryptogram-template.ng.html',
+      restrict: 'EA',
+      link: function(scope, element, attrs){
+        scope.settings = {};
+        scope.code = {};
+        scope.letterIndexMap = cryptogramService.getLetterIndexMap(scope.puzzle);
+
+        if(scope.solution){
+          _.each(scope.solution, function(c, index){
+            if(cryptogramService.isLetter(c)){
+              scope.code[scope.puzzle[index]] = c;
+            }
+          });
+        }
+
+        scope.$watch('puzzle', function(puzzle){
+          refreshView(puzzle);
+        });
+
+        attrs.$observe('maxLineChars', function(maxLineChars){
+          scope.maxLineChars = maxLineChars;
+          scope.letterWidth = Math.floor(100/scope.maxLineChars);
+          refreshView(scope.puzzle);
+          scope.settings.recompileBool = true;
+        });
+
+        scope.$on('hint', function(event, hint){
+          scope.code[scope.puzzle[hint.index]] = hint.letter;
+        });
+
+        scope.$on('answer', function(event, answer){
+          _.each(answer, function(c, index){
+            if(cryptogramService.isLetter(c)){
+              scope.code[scope.puzzle[index]] = c;
+            }
+          });
+        });
+
+        scope.remainingLetters = function(){
+          return _.difference('abcdefghijklmnopqrstuvwxyz', _.values(scope.code)).join(' ');
+        };
+
+        // update the solution, look for invalid characters when the model changes
+        scope.$watchCollection('code', function(code){
+          scope.solution = updateSolution(code);
+          scope.invalidCharacters = _.object(_.map(cryptogramService.getInvalidCharacters(scope.code), function(o){
+            return [o, true];
+          }));
+        });
+
+        function refreshView(puzzle){
+          var words = scope.puzzle.split(/[\s]+/);
+
+          scope.lines = [];
+          var counter = 0;
+          var currentLine = '';
+          _.each(words, function(word){
+            if(currentLine.length + word.length > scope.maxLineChars){
+              scope.lines.push(currentLine.slice(0,-1));
+              currentLine = word + ' ';
+              counter = word.length;
+            } else if(currentLine.length + word.length === scope.maxLineChars){
+              currentLine += word;
+              scope.lines.push(String(currentLine));
+              currentLine = '';
+            } else {
+              currentLine += word + ' ';
+            }
+          });
+          if(currentLine){
+            scope.lines.push(currentLine.slice(0,-1));
+          }
+
+          // setTimeout(function () {
+          //   $.autotab.refresh();
+          // }, 1);
+        }
+
+        function updateSolution(code){
+          return _.map(scope.puzzle, function(c){
+            return code[c]? code[c]: (cryptogramService.isLetter(c)? ' ': c);
+          }).join("");
+        }
       }
     };
   }

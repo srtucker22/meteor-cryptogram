@@ -1,0 +1,74 @@
+<div class="container" style="padding-top: 0px">
+  <div class="row">
+    <div class="col-md-6 col-xs-12 text-center">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="panel panel-default robot-quotebox">
+            <div class="panel-body">
+              <h2><code>{{cryptobotctrl.currentQuoteHeader}}</code></h2>
+              <h3><pre><code>{{cryptobotctrl.currentQuote}}</code></pre></h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-8 col-xs-offset-2 text-center">
+          <img src="assets/robot.png" class="robot"/>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-xs-12 text-center">
+      <div class="row text-center">
+        <div class="col-xs-12">
+          <div class="col-xs-12 panel panel-default robot-button-container">
+            <div class="panel-body">
+              <h3>Enter your quote:</h3>
+              <textarea class="form-control" rows="10" id="quote" ng-model="cryptobotctrl.quote"></textarea>
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="panel panel-default col-xs-12 results-panel" ng-show="cryptobotctrl.result">
+                    <div class="panel-body">
+                      <button class="btn-clipboard" clip-copy="cryptobotctrl.result" clip-click="cryptobotctrl.showCopiedMessage()" clip-click-fallback="fallback(cryptobotctrl.result)" tooltip="{{cryptobotctrl.copyStatus}}" ng-mouseenter="cryptobotctrl.resetCopyStatus()">copy</button>
+                      <div class="row">
+                        <h3 class="col-xs-12">Your result:</h3>
+                      </div>
+                      <div class="row results-text">
+                        <p class="col-xs-12" style="overflow: overlay"><pre class="text-left" style="border: none; background: none">{{cryptobotctrl.result}}</pre></p>
+                      </div>
+                      <div class="row cipher-text">
+                        <p class="col-xs-2" ng-repeat="(key,val) in cryptobotctrl.cipher">{{key}}: {{val}}</p>
+                      </div>
+                      <div class="row">
+                        <div class="btn btn-paste" ng-click="cryptobotctrl.quote = cryptobotctrl.result">
+                          paste above
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-12" style="padding-top: 20px" ng-show="!cryptobotctrl.result">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row text-center">
+        <div class="col-xs-8 col-xs-offset-2 text-center btn btn-primary robot-button" ng-click="cryptobotctrl.createCryptogram()">
+          build cryptogram
+        </div>
+        <div class="col-xs-8 col-xs-offset-2 text-center btn btn-primary robot-button" ng-click="cryptobotctrl.solveCryptogram()">
+          solve cryptogram
+        </div>
+        <div class="col-xs-8 col-xs-offset-2 text-center btn btn-primary robot-button" ng-click="cryptobotctrl.getRandomQuote()">
+          load random quote
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    
+  </div>
+</div>
+<br />

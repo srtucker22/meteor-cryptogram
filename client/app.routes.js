@@ -1,4 +1,4 @@
-angular.module("app").run(['$rootScope', '$state', '$meteorSubscribe', function($rootScope, $state, $meteorSubscribe) {
+angular.module("app").run(['$rootScope', '$state', '$meteor', function($rootScope, $state, $meteor) {
 
   $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error){ 
     // console.log(event);
@@ -15,9 +15,12 @@ angular.module("app").run(['$rootScope', '$state', '$meteorSubscribe', function(
     }
   });
 
+  $rootScope.tweet = "Meet Cryptobot, the robot that solves cryptograms!";
+  $rootScope.facebookUrl = "//cryptograms.meteor.com/";
+
   $rootScope.$watch('currentUser', function(currentUser, previousState){
     if(currentUser && !$rootScope.subscriptionHandle){
-      $meteorSubscribe.subscribe('my_data').then(function(subscriptionHandle){
+      $meteor.subscribe('my_data').then(function(subscriptionHandle){
         $rootScope.subscriptionHandle = subscriptionHandle;
         $rootScope.$broadcast('currentUser');
       });
@@ -58,12 +61,26 @@ angular.module("app").config(['$urlRouterProvider', '$stateProvider', '$location
 
     $locationProvider.html5Mode(true);
 
+    $urlRouterProvider.when('/', '/cryptobot');
+
     $stateProvider
-      .state('dashboard', {
-        url: '/',
-        templateUrl: 'client/dashboard/dashboard.tpl',
-        controller: 'DashboardCtrl',
-        controllerAs: 'dashboardctrl'
+      .state('play', {
+        url: '/play',
+        templateUrl: 'client/play/play.ng.html',
+        controller: 'PlayCtrl',
+        controllerAs: 'playctrl'
+      })
+      .state('cryptobot', {
+        url: '/cryptobot',
+        templateUrl: 'client/cryptobot/cryptobot.ng.html',
+        controller: 'CryptobotCtrl',
+        controllerAs: 'cryptobotctrl',
+      })
+      .state('about', {
+        url: '/about',
+        templateUrl: 'client/about/about.ng.html',
+        controller: 'AboutCtrl',
+        controllerAs: 'aboutctrl'
       })
       .state('unauthorized', {
         url: '/401',
@@ -82,5 +99,5 @@ angular.module("app").config(['$urlRouterProvider', '$stateProvider', '$location
                   "</div>",
       });
 
-    $urlRouterProvider.otherwise("/404");
+    $urlRouterProvider.otherwise("/play");
   }]);

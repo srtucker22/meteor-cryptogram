@@ -1,3 +1,5 @@
+var fs = Npm.require('fs');
+
 var defaultQuoteParams = {
   'format': 'text',
   'min_lines': 4
@@ -7,6 +9,33 @@ var maxHints = 3;
 
 // manipulate cryptograms
 Meteor.methods({
+  /**
+   * check the solution to a given cryptogram
+   * 
+   * @param {String} cryptogramId _id of the cryptogram
+   * @param {String} solution the user's solution
+   */
+  checkSolution: function (cryptogramId, solution) {
+    var cryptogram = Cryptograms.findOne({_id: cryptogramId});
+    if(!cryptogram)
+      throw new Meteor.Error('cryptogram not found'); 
+
+    var isCorrect = _.isEqual(cryptogram.answer.toLowerCase(), solution.toLowerCase());
+    
+    var loggedInUser = Meteor.user();
+    
+    // if the user is logged in and correctly guesses the puzzle, update their stats
+    if(loggedInUser && isCorrect){
+      Meteor.users.update({_id: loggedInUser._id}, {$unset: {'cryptograms.current': ''}, $push: {'cryptograms.solved': cryptogramId}});
+    }
+    
+    return isCorrect;
+  },
+
+  createCryptogram: function(str) {
+    return createCryptogram(str);
+  },
+
   /**
    * get a cryptogram puzzle
    *
@@ -36,7 +65,8 @@ Meteor.methods({
           if(cryptogram)
             return {_id: cryptogram._id, puzzle: createCryptogram(cryptogram.answer)};
           else{
-            throw new Meteor.Error('cryptogram not found');
+            Meteor.users.update({_id: loggedInUser._id}, {$unset: {'cryptograms.current': 1}});
+            return Meteor.call('getCryptogram');
           }
         }else{  // give the user a new puzzle
           counter = 0;
@@ -60,7 +90,9 @@ Meteor.methods({
             Meteor.users.update({_id: loggedInUser._id}, {$set: {'cryptograms.current': {cryptogram: cryptogram._id, hints: maxHints}}});  // update the current puzzle for the user and give them hints
             return {_id: cryptogram._id, puzzle: createCryptogram(cryptogram.answer)};
           }else{
-            throw new Meteor.Error('cryptogram not found');
+            var newCryptogram = Cryptograms.insert({answer: getRandomQuote({minLength: 100, variance: 200})});
+            Meteor.users.update({_id: loggedInUser._id}, {$set: {'cryptograms.current': {cryptogram: newCryptogram._id, hints: maxHints}}});  // update the current puzzle for the user and give them hints
+            return Cryptograms.findOne({_id: newCryptogram});
           }
         }
       }else{  // give the rando a rando puzzle
@@ -73,7 +105,9 @@ Meteor.methods({
           return {_id: cryptogram._id, puzzle: createCryptogram(cryptogram.answer)};
         }
         else{
-          throw new Meteor.Error('cryptogram not found');
+          var newC = Cryptograms.insert({answer: getRandomQuote({minLength: 100, variance: 200})});
+          console.log('new cryptogram created');
+          return Cryptograms.findOne({_id: newC});
         }
       }   
     }
@@ -145,44 +179,59 @@ Meteor.methods({
    *
    * @param {Object} options -- options for the API specified here: http://iheartquotes.com/api
    */
-  getRandomQuote: function(params){
+  getRandomQuote: function(p){
 
-    params = params? params: defaultQuoteParams;
+    var params = p? p:{};
+
+    // // shitty api
+    // params = params? params: defaultQuoteParams;
     
-    var url = "http://www.iheartquotes.com/api/v1/random";
+    // var url = "http://www.iheartquotes.com/api/v1/random";
 
     this.unblock();
+
+    // I want to find the files!
+    // var files = fs.readdirSync(process.cwd());
+    // console.log(files);
+
+    var filenames = [
+      'alice_in_wonderland.txt',
+      'around_the_world_in_80_days.txt',
+      'journey_to_the_center_of_the_earth.txt',
+      'kamasutra.txt',
+      'moby_dick.txt',
+      'o_pioneers.txt',
+      'peter_pan.txt',
+      'pride_and_prejudice.txt',
+      'the_adventures_of_sherlock_holmes.txt',
+      'the_adventures_of_tom_sawyer.txt',
+      'the_mysterious_island.txt',
+      'treasure_island.txt',
+      'twenty_thousand_leagues_under_the_sea.txt',
+      'ulysses.txt'];
+
+    var randomBookNumber = Math.floor(Math.random() * filenames.length);
+
     try {
-      var result = HTTP.call("GET", url, {params: params});
-      return result.content;
+      var result = Assets.getText(filenames[randomBookNumber]).replace(/(?:\r\n|\r|\n)/g, " ");
+
+      var randomLength = Math.floor((Math.random() * (params.variance? params.varaiance: 2000) + (params.minLength? params.minLength : 1000)));
+
+      // start from a random point in the text
+      var randomSection = Math.floor((Math.random() * (result.length - randomLength)));
+      
+      // try to start at a new word
+      var startPoint = result.indexOf(' ', randomSection) > 0? result.indexOf(' ', randomSection) + 1 : randomSection;
+      
+      // try to end at the end of a word
+      var endPoint = result.indexOf(' ', startPoint + randomLength) > 0? result.indexOf(' ', startPoint + randomLength) : startPoint + randomLength;
+      
+      // return the substring
+      return result.substring(startPoint, endPoint);
     } catch (e) {
       console.log(e);
-      // Got a network error, time-out or HTTP error in the 400 or 500 range.
       throw new Meteor.Error(e);
     }
-  },
-
-  /**
-   * check the solution to a given cryptogram
-   * 
-   * @param {String} cryptogramId _id of the cryptogram
-   * @param {String} solution the user's solution
-   */
-  checkSolution: function (cryptogramId, solution) {
-    var cryptogram = Cryptograms.findOne({_id: cryptogramId});
-    if(!cryptogram)
-      throw new Meteor.Error('cryptogram not found'); 
-
-    var isCorrect = _.isEqual(cryptogram.answer.toLowerCase(), solution.toLowerCase());
-    
-    var loggedInUser = Meteor.user();
-    
-    // if the user is logged in and correctly guesses the puzzle, update their stats
-    if(loggedInUser && isCorrect){
-      Meteor.users.update({_id: loggedInUser._id}, {$unset: {'cryptograms.current': ''}, $push: {'cryptograms.solved': cryptogramId}});
-    }
-    
-    return isCorrect;
   },
 });
 
@@ -192,12 +241,15 @@ function createCryptogram(str){
   // first make the string lowercase
   str = str.toLowerCase();
 
+  var alphabet = _.toArray("abcdefghijklmnopqrstuvwxyz");
+
   // make a couple of arrays of the alphabet
-  var letters = _.filter(_.toArray("abcdefghijklmnopqrstuvwxyz"), function(c){
+  var letters = _.filter(alphabet, function(c){
     return str.indexOf(c) >= 0;
   });
-  var shuffled = shuffle(letters.slice(0)); // shuffle the alphabet
-  var code = _.object(letters, shuffled); // map them together for the code
+  var shuffled = shuffle(alphabet); // shuffle the alphabet
+
+  var code = _.object(letters, shuffled.slice(0, letters.length)); // map them together for the code
 
   // map each character in str using the code
   var puzzle = _.map(str, function(l){

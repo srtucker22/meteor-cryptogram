@@ -1,9 +1,9 @@
 (function(){
-  angular.module("app").controller("DashboardCtrl", DashboardCtrl);
+  angular.module("app").controller("PlayCtrl", PlayCtrl);
 
-  DashboardCtrl.$inject = ['$meteorMethods', '$rootScope', '$scope', 'cryptogramService', 'matchmedia'];
+  PlayCtrl.$inject = ['$meteor', '$rootScope', '$scope', 'matchmedia'];
 
-  function DashboardCtrl($meteorMethods, $rootScope, $scope, cryptogramService, matchmedia){
+  function PlayCtrl($meteor, $rootScope, $scope, matchmedia){
     var vm = this;
 
     vm.getCryptogram = getCryptogram;
@@ -17,6 +17,8 @@
     activate();
 
     function activate(){
+      vm.currentUser = $rootScope.currentUser;
+
       $scope.$on('currentUser', function(){
         if($rootScope.currentUser){
           vm.currentUser = $rootScope.currentUser;
@@ -42,12 +44,11 @@
 
     function getCryptogram(){
       vm.cryptogram = null;
-      $meteorMethods.call("getCryptogram").then(function(result){
+      $meteor.call("getCryptogram").then(function(result){
         vm.answer = false;
         vm.solved = false;
 
         if(vm.currentUser && vm.currentUser.cryptograms && vm.currentUser.cryptograms.current && vm.currentUser.cryptograms.current.cryptogram === result._id){
-          console.log('current', vm.currentUser.cryptograms.current.solution);
           $scope.data.currentSolution = vm.currentUser.cryptograms.current.solution;
         }else{
           $scope.data.currentSolution = null;
@@ -60,7 +61,7 @@
     }  
 
     function getHint(){
-      $meteorMethods.call("getHint", vm.cryptogram._id, $scope.data.currentSolution).then(function(hint){
+      $meteor.call("getHint", vm.cryptogram._id, $scope.data.currentSolution).then(function(hint){
         if(hint){
           $scope.$broadcast('hint', hint);
         }
@@ -70,7 +71,7 @@
     }
 
     function giveUp(){
-      $meteorMethods.call("giveUp", vm.cryptogram._id).then(function(result){
+      $meteor.call("giveUp", vm.cryptogram._id).then(function(result){
         vm.answer = true;
         $scope.$broadcast("answer", result);
       },function(err){
@@ -79,7 +80,7 @@
     }
 
     function submit(){
-      $meteorMethods.call("checkSolution", vm.cryptogram._id, $scope.data.currentSolution).then(function(result){
+      $meteor.call("checkSolution", vm.cryptogram._id, $scope.data.currentSolution).then(function(result){
         if(result){
           vm.answer = true;
           vm.solved = true;

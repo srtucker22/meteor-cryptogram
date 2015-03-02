@@ -19,10 +19,5 @@ Meteor.startup(function () {
     _.each(quotes, function(quote){
       Cryptograms.insert({answer: quote});
     });
-
-    // for(var i=0; i<10; i++){
-    //   var quote = Meteor.call('getRandomQuote');
-    //   Cryptograms.insert({answer: quote});
-    // }
   }
 });

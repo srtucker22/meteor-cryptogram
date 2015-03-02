@@ -1,5 +1,21 @@
 var Schema = {};
 
+Schema.CurrentCryptogram = new SimpleSchema({
+  cryptogram: {
+    type: String,
+    label: "cryptogram id"
+  },
+  hints: {
+    type: Number,
+    label: "hints"
+  },
+  solution: {
+    type: String,
+    label: "current solution",
+    optional: true
+  }
+});
+
 Schema.UserCryptograms = new SimpleSchema({
   solved: {
     type: [String],
@@ -12,10 +28,9 @@ Schema.UserCryptograms = new SimpleSchema({
     optional: true
   },
   current: {
-    type: Object,
+    type: Schema.CurrentCryptogram,
     label: 'current',
     optional: true,
-    blackbox: true
   }
 });
 
@@ -64,7 +79,6 @@ Schema.UserProfile = new SimpleSchema({
 Schema.User = new SimpleSchema({
   username: {
     type: String,
-    regEx: /^[a-z0-9A-Z_]{3,15}$/,
     optional: true
   },
   emails: {

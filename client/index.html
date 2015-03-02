@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Meteor Cryptogram</title>
-  <meta name="description" content="solve cryptograms">
+  <meta name="description" content="Meet Cryptobot, the robot that solves cryptograms!">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link rel="apple-touch-icon" href="/cryptogram-shield.ico">
@@ -16,8 +16,10 @@
   <!--[if lt IE 8]>
     <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="//browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
   <![endif]-->
-  <div ng-app='app' ng-cloak ng-strict-di>
 
+  <div id="fb-root"></div>
+
+  <div ng-app='app' ng-cloak ng-strict-di>
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -32,16 +34,33 @@
           </button>
         </div>
         <div class="collapse navbar-collapse" collapse="!revealCollapsed">
+          <ul class="nav navbar-nav navbar-left">
+            <li>
+              <a ui-sref="cryptobot" ui-sref-active="active">
+                cryptobot
+              </a>
+            </li>
+            <li>
+              <a ui-sref="play" ui-sref-active="active">
+                play
+              </a>
+            </li>
+            <li>
+              <a ui-sref="about" ui-sref-active="active">
+                about
+              </a>
+            </li>
+          </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown" dropdown on-toggle="toggled(open)">
               <a href class="dropdown-toggle" dropdown-toggle>
                 {{currentUser.profile.name}}
               </a>
-              <ul class="dropdown-menu" ng-show="currentUser">
+              <ul class="dropdown-menu" ng-show="currentUser && currentUser.profile.name">
                 <li><a href ng-click="logout()">logout</a></li>
               </ul>
             </li>
-            <li class="dropdown" ng-show="!currentUser && !loggingIn">
+            <li class="dropdown" ng-show="(!currentUser || !currentUser.profile.name) && !loggingIn">
               <a href ng-click="loginWithFacebook()">
                 login
               </a>
@@ -52,6 +71,13 @@
     </nav>
 
     <div ui-view></div>
+
+    <div class="container" style="padding-bottom: 60px">
+      <div class="row text-center">
+        <div class="col-md-offset-4 col-md-2 col-xs-6" ng-show="facebookUrl" fb-like="facebookUrl"></div>
+        <div class="col-md-2 col-xs-6" ng-show="tweet" tweet="tweet"></div>
+      </div>
+    </div>
 
     <footer class="footer">
       <div class="container text-uppercase">

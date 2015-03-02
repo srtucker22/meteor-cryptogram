@@ -22,3 +22,6 @@ accounts-facebook
 npm-container
 accounts-password
 http
+artwells:accounts-guest
+meteorhacks:kadira
+angularui:angular-ui-router
