@@ -60,7 +60,6 @@
       $scope.$on('$destroy', function(){
         killGuess().then(function(){
           console.log('killer');
-          console.log(Guesses.findOne($scope.guess._id));
         }, function(err){
           console.log(err);
         });

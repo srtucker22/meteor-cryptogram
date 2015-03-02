@@ -17,17 +17,9 @@
     activate();
 
     function activate(){
-      vm.currentUser = $rootScope.currentUser;
-
-      $scope.$on('currentUser', function(){
-        if($rootScope.currentUser){
-          vm.currentUser = $rootScope.currentUser;
-        }
-      });
-
       $scope.$watch('data', function(data){
-        if(vm.currentUser)
-          Meteor.users.update({_id: vm.currentUser._id}, {$set: {'cryptograms.current.solution': $scope.data.currentSolution}});
+        if($rootScope.currentUser)
+          Meteor.users.update({_id: $rootScope.currentUser._id}, {$set: {'cryptograms.current.solution': $scope.data.currentSolution}});
       }, true);
 
       matchmedia.onPhone(function(mediaQueryList){
@@ -48,8 +40,8 @@
         vm.answer = false;
         vm.solved = false;
 
-        if(vm.currentUser && vm.currentUser.cryptograms && vm.currentUser.cryptograms.current && vm.currentUser.cryptograms.current.cryptogram === result._id){
-          $scope.data.currentSolution = vm.currentUser.cryptograms.current.solution;
+        if($rootScope.currentUser && $rootScope.currentUser.cryptograms && $rootScope.currentUser.cryptograms.current && $rootScope.currentUser.cryptograms.current.cryptogram === result._id){
+          $scope.data.currentSolution = $rootScope.currentUser.cryptograms.current.solution;
         }else{
           $scope.data.currentSolution = null;
         }

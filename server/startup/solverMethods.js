@@ -5,6 +5,8 @@ var readline = Npm.require('readline');
 Meteor.methods({
 
   simulatedAnnealing: function(guessId) {
+    check(guessId, String);
+    
     this.unblock();
 
     var simulated_annealing;

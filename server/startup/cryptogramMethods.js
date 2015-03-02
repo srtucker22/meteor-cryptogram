@@ -16,6 +16,9 @@ Meteor.methods({
    * @param {String} solution the user's solution
    */
   checkSolution: function (cryptogramId, solution) {
+    check(cryptogramId, String);
+    check(solution, String);
+
     var cryptogram = Cryptograms.findOne({_id: cryptogramId});
     if(!cryptogram)
       throw new Meteor.Error('cryptogram not found'); 
@@ -33,6 +36,8 @@ Meteor.methods({
   },
 
   createCryptogram: function(str) {
+    check(str, String);
+
     return createCryptogram(str);
   },
 
@@ -42,7 +47,8 @@ Meteor.methods({
    * @param {String} cryptogramId optional _id of cryptogram to send
    */
   getCryptogram: function (cryptogramId) {
-    
+    check(cryptogramId, Match.OneOf(String, undefined, null));
+
     var cryptogram;
     var counter = 0;
 
@@ -120,6 +126,9 @@ Meteor.methods({
    * @param {String} currentSolution the user's current solution
    */
   getHint: function (cryptogramId, currentSolution) {
+    check(cryptogramId, String);
+    check(currentSolution, Match.OneOf(String, undefined, null));
+
     var loggedInUser = Meteor.user();
     if(!loggedInUser){
       throw new Meteor.Error("user must be logged in to receive hints");
@@ -160,6 +169,7 @@ Meteor.methods({
    * @param {String} cryptogramId the _id of the cryptogram 
    */
   giveUp: function(cryptogramId){
+    check(cryptogramId, String);
 
     var cryptogram = Cryptograms.findOne({_id: cryptogramId});
     if(!cryptogram){
@@ -181,6 +191,12 @@ Meteor.methods({
    */
   getRandomQuote: function(p){
 
+    var pattern = {
+      variance: Match.Optional(Number),
+      minLength: Match.Optional(Number)
+    };
+    check(p, Match.Optional(pattern));
+
     var params = p? p:{};
 
     // // shitty api
@@ -190,7 +206,7 @@ Meteor.methods({
 
     this.unblock();
 
-    // I want to find the files!
+    // I want to find the files! can't happen right now :(
     // var files = fs.readdirSync(process.cwd());
     // console.log(files);
 

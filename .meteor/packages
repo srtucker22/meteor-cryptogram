@@ -22,6 +22,9 @@ accounts-facebook
 npm-container
 accounts-password
 http
-artwells:accounts-guest
 meteorhacks:kadira
 angularui:angular-ui-router
+wylio:winston-papertrail
+audit-argument-checks
+browser-policy
+meteor-accounts-guest
