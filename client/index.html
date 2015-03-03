@@ -75,7 +75,7 @@
 
     <div ui-view></div>
 
-    <div class="container" style="padding-bottom: 60px">
+    <div class="container" style="padding-bottom: 60px" ng-show="!('404' | isState) && !('401' | isState)">
       <div class="row text-center">
         <div class="col-md-offset-4 col-md-2 col-xs-6" ng-show="facebookUrl" fb-like="facebookUrl"></div>
         <div class="col-md-2 col-xs-6" ng-show="tweet" tweet="tweet"></div>

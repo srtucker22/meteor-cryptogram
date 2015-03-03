@@ -15,8 +15,8 @@ Meteor.methods({
     this.connection.onClose(function(){
       if(simulated_annealing){
         simulated_annealing.kill();
-        return;
       }
+      return;
     });
 
     if(!guessId)
@@ -27,12 +27,22 @@ Meteor.methods({
     // end the job if the user changes their mind or whatever
     Guesses.find(guessId).observeChanges({
       added: function(id, fields){
-        console.log(id);
-        console.log(fields);
+        if(fields.kill){
+          if(simulated_annealing){
+            simulated_annealing.stdin.pause();
+            simulated_annealing.kill();
+          }
+          return;
+        }
       },
       changed: function(id, fields){
-        console.log('changed', id);
-        console.log('changed', fields);
+        if(fields.kill){
+          if(simulated_annealing){
+            simulated_annealing.stdin.pause();
+            simulated_annealing.kill();
+          }
+          return;
+        }
       }
     });
 
@@ -61,8 +71,8 @@ Meteor.methods({
           Guesses.update({_id: guessId}, {$set: {status: statusObject}});
         } catch(err){
           if(!returned){
-            console.log(data.toString());
-            console.log(err.toString());
+            log.info(data.toString());
+            log.error(err.toString());
             simulated_annealing.stdin.pause();
             simulated_annealing.kill();
             fut.throw(new Meteor.Error(err.toString()));
@@ -74,7 +84,7 @@ Meteor.methods({
 
     simulated_annealing.stderr.on('data', Meteor.bindEnvironment(function (err) {
       if(!returned){
-        console.log(err.toString());
+        log.error(err.toString());
         simulated_annealing.stdin.pause();
         simulated_annealing.kill();
         fut.throw(new Meteor.Error(err.toString()));
@@ -87,7 +97,7 @@ Meteor.methods({
         fut.return(Guesses.findOne(guessId));
       else{
         if(!returned){
-          console.log('no final guess');
+          log.error('no final guess');
           fut.throw(new Meteor.Error('no final guess'));
           returned = true;
         }

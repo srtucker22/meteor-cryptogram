@@ -31,11 +31,10 @@ angular.module("app").run(['$rootScope', '$state', '$meteor', function($rootScop
   });
 
   $rootScope.logout = function(){
-    console.log('logging out');
     if($rootScope.currentUser){
       Meteor.logout(function(error){
         if(error){
-          console.log(error);
+          console.log('err', error);
         }
       });
     }
@@ -82,13 +81,14 @@ angular.module("app").config(['$urlRouterProvider', '$stateProvider', '$location
         controller: 'AboutCtrl',
         controllerAs: 'aboutctrl'
       })
-      .state('unauthorized', {
+      .state('401', {
         url: '/401',
         template: "<div class='row'>" + 
                     "<h1 class='col-xs-12 text-center'>401</h1>" +
                     "<h3 class='col-xs-12 text-center text-uppercase'>Unauthorized</h3>" +
                     "<h4 class='col-xs-12 text-center text-uppercase'>Sorry, but you are not authorized to view that page.</h4>" +
                   "</div>",
+        controller: 'ErrorCtrl'
       })
       .state('404', {
         url: '/404',
@@ -97,7 +97,8 @@ angular.module("app").config(['$urlRouterProvider', '$stateProvider', '$location
                     "<h3 class='col-xs-12 text-center text-uppercase'>Page Not Found</h3>" +
                     "<h4 class='col-xs-12 text-center text-uppercase'>Sorry, but the page you were trying to view does not exist.</h4>" +
                   "</div>",
+        controller: 'ErrorCtrl'
       });
 
-    $urlRouterProvider.otherwise("/play");
+    $urlRouterProvider.otherwise("/cryptobot");
   }]);

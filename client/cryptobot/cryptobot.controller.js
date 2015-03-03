@@ -59,9 +59,8 @@
 
       $scope.$on('$destroy', function(){
         killGuess().then(function(){
-          console.log('killer');
         }, function(err){
-          console.log(err);
+          console.log('err', err);
         });
       });
     }
@@ -96,7 +95,7 @@
             vm.currentQuote = vm.buildingQuote;
           }
         }, function(err){
-          console.log(err);
+          console.log('err', err);
         });
       }else{
         vm.currentQuote = vm.needQuote;
@@ -115,12 +114,15 @@
 
     function getRandomQuote() {
       
-      killGuess();
+      killGuess().then(function(success){
+      }, function(err){
+        console.log('err', err);
+      });
 
       $meteor.call('getRandomQuote').then(function(result){
         vm.quote = result;
       }, function(err){
-        console.log(err);
+        console.log('err', err);
       });
     }
 
@@ -156,9 +158,8 @@
               $scope.guess = $meteor.object(Guesses, result[0]._id, false);
               $meteor.call('simulatedAnnealing', $scope.guess._id).then(function(result){
                 // returns the final guess
-                console.log("final guess");
               }, function(err){
-                console.log(err);
+                console.log('err', err);
               });
             }else{
               console.log("a guess wasn't inserted");
@@ -166,6 +167,8 @@
           }, function(err){
             console.log("err", err);
           });
+        }, function(err){
+          console.log('err', err);
         });
       }
     }
