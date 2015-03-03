@@ -1,7 +1,7 @@
 <div class="container" style="padding-top: 0px">
   <div class="row">
     <div class="col-md-6 col-xs-12 text-center">
-      <div class="row">
+      <div class="row" id="quotebox">
         <div class="col-xs-12">
           <div class="panel panel-default robot-quotebox">
             <div class="panel-body">
@@ -55,15 +55,15 @@
         </div>
       </div>
       <div class="row text-center">
-        <div class="col-xs-8 col-xs-offset-2 text-center btn btn-primary robot-button" ng-click="cryptobotctrl.createCryptogram()">
+        <a scroll-on-click href="#quotebox"><div class="col-xs-8 col-xs-offset-2 text-center btn btn-primary robot-button" ng-click="cryptobotctrl.createCryptogram()">
           build cryptogram
-        </div>
-        <div class="col-xs-8 col-xs-offset-2 text-center btn btn-primary robot-button" ng-click="cryptobotctrl.solveCryptogram()">
+        </div></a>
+        <a scroll-on-click href="#quotebox"><div class="col-xs-8 col-xs-offset-2 text-center btn btn-primary robot-button" ng-click="cryptobotctrl.solveCryptogram()">
           solve cryptogram
-        </div>
-        <div class="col-xs-8 col-xs-offset-2 text-center btn btn-primary robot-button" ng-click="cryptobotctrl.getRandomQuote()">
+        </div></a>
+        <a scroll-on-click href="#quotebox"><div class="col-xs-8 col-xs-offset-2 text-center btn btn-primary robot-button" ng-click="cryptobotctrl.getRandomQuote()">
           load random quote
-        </div>
+        </div></a>
       </div>
     </div>
   </div>

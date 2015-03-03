@@ -8,8 +8,7 @@
     vm.buildingQuote = "Your cryptogram is complete!\nShare your new shiny cryptogram with the world!";
     vm.createCryptogram = createCryptogram;
     vm.getRandomQuote = getRandomQuote;
-    vm.gettingQuote = "Scouring the web for an English random quote greater than 500 characters...";
-    vm.gotQuote = "Quote sourced from Wikipedia.\n\nFascinating.";
+    vm.gotQuote = "Quote sourced from my library.\n\nFascinating.";
     vm.needQuote = "I need a quote to perform my duties. I can find a random one if you like.";
     vm.quotes = [
       "Hi, I'm Cryptobot.\nI build and solve cryptograms.\nHow can I serve you?",
@@ -121,6 +120,7 @@
 
       $meteor.call('getRandomQuote').then(function(result){
         vm.quote = result;
+        vm.currentQuote = vm.gotQuote;
       }, function(err){
         console.log('err', err);
       });
