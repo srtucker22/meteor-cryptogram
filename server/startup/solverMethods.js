@@ -3,9 +3,33 @@ var Future = Npm.require('fibers/future');
 var readline = Npm.require('readline');
 
 Meteor.methods({
-
-  simulatedAnnealing: function(guessId) {
+  updateGuess: function(guessId, statusObject){
     check(guessId, String);
+    console.log(guessId);
+
+    var alphabet = 'abcdefghijklmnopqrstuvwxyz';
+    var cipherMatch = _.object(_.map(alphabet, function(l){
+      return [l,String];
+    }));
+
+    check(statusObject, {
+      status: Match.OneOf(String, undefined, null),
+      cipher: Match.OneOf(cipherMatch, undefined, null),
+      cost: Match.OneOf(Number, undefined, null),
+      guess: Match.OneOf(String, undefined, null),
+      temperature: Match.OneOf(Number, undefined, null)
+    });
+
+    if(Roles.userIsInRole(this.userId, ['admin'])){
+      Guesses.update({_id: guessId}, {$set: {status: statusObject}});
+    }
+  },
+
+  // doesn't work when deployed to cryptograms.meteor.com because there is no python on the machine and no directory available
+  localPythonSolver: function(guessId) {
+    check(guessId, String);
+    
+    log.info('solving ', guessId);
     
     this.unblock();
 
@@ -55,7 +79,7 @@ Meteor.methods({
     var fut = new Future();
 
     // use spawn to get the stream as it flows
-    simulated_annealing = spawn('python', [base  + '/.scripts/simulated_annealing.py', base + '/.scripts', guess.puzzle, '-u']);
+    simulated_annealing = spawn('python', [base  + '/public/scripts/simulated_annealing.py', base + '/public/scripts', guess.puzzle, '-u']);
     
     var statusObject;
 
@@ -107,4 +131,14 @@ Meteor.methods({
     return fut.wait();
   },
 
+  // doesn't work when deployed to cryptograms.meteor.com because ddp keeps changing
+  herokuFlaskSolver: function(guessId){
+    check(guessId, String);
+    
+    this.unblock();
+
+    HTTP.call('POST', 'https://gentle-atoll-5114.herokuapp.com/solve', {params: {id: guessId}}, function(callback){
+      log.info(callback);
+    });
+  },
 });

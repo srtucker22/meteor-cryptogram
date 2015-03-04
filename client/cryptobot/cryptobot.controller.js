@@ -42,7 +42,7 @@
       $scope.guesses = $meteor.collection(Guesses, false).subscribe('my_guesses');
 
       $scope.$watchCollection('guess', function(guess){
-        if(guess && guess.status){
+        if(guess && guess.status && !guess.kill){
           vm.guessCounter += 1;
           vm.currentQuote = (vm.guessCounter >= vm.totalGuesses || guess.status.status === 'final guess') ? vm.solvedQuote: vm.solvingQuote + " " + parseInt(100*vm.guessCounter/vm.totalGuesses).toString() + "% complete";
           vm.result = guess.status.guess;
@@ -78,23 +78,26 @@
     function createCryptogram(){
       vm.cipher = {};
       if(vm.quote){
-        killGuess();
-        $meteor.call('createCryptogram', vm.quote).then(function(result){
-          if(result){
-            var answer = vm.quote.toLowerCase().slice(0);
-            vm.result = result;
+        killGuess().then(function(){
+          $meteor.call('createCryptogram', vm.quote).then(function(result){
+            if(result){
+              var answer = vm.quote.toLowerCase().slice(0);
+              vm.result = result;
 
-            vm.cipher = {};
-            _.each(answer, function(val, index){
-              if(cryptogramService.isLetter(val))
-                vm.cipher[result[index]] = val;
-            });
+              vm.cipher = {};
+              _.each(answer, function(val, index){
+                if(cryptogramService.isLetter(val))
+                  vm.cipher[result[index]] = val;
+              });
 
-            changeQuoteHeader();
-            vm.currentQuote = vm.buildingQuote;
-          }
+              changeQuoteHeader();
+              vm.currentQuote = vm.buildingQuote;
+            }
+          }, function(err){
+            console.log('err', err);
+          });
         }, function(err){
-          console.log('err', err);
+          console.log(err);
         });
       }else{
         vm.currentQuote = vm.needQuote;

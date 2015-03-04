@@ -21,3 +21,11 @@ Meteor.publish("my_guesses", function () {
   }
 });
 
+Meteor.publish("guesses", function () {
+  if(Roles.userIsInRole(this.userId, ['admin'])){
+    return Guesses.find();
+  } else {
+    this.ready();
+  }
+});
+

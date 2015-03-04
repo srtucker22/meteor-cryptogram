@@ -11,7 +11,7 @@
       </p>
 
       <div class="row text-center">
-        <div class="col-xs-2 text-left" ng-repeat="item in aboutctrl.frequencyChart">
+        <div class="col-xs-3 text-left" ng-repeat="item in aboutctrl.frequencyChart">
           {{item[0]}} : {{(item[1]*100) | number : 2}}%
         </div>
       </div>
@@ -25,7 +25,7 @@
       </p>
 
       <div class="row text-center">
-        <div class="col-xs-2 text-left" ng-repeat="item in aboutctrl.digramChart">
+        <div class="col-xs-3 text-left" ng-repeat="item in aboutctrl.digramChart">
           {{item[0]}} : {{(item[1]*100) | number : 2}}%
         </div>
       </div>
@@ -42,7 +42,7 @@
 
       <h3>Frequency Chart for Single Letters in Cryptogram:</h3>
       <div class="row text-center">
-        <div class="col-xs-2 text-left" ng-repeat="item in aboutctrl.puzzleFrequencyChart">
+        <div class="col-xs-3 text-left" ng-repeat="item in aboutctrl.puzzleFrequencyChart">
           {{item[0]}} : {{(item[1]*100) | number : 2}}%
         </div>
       </div>
@@ -53,7 +53,7 @@
 
       <h3>First Cipher:</h3>
       <div class="row text-center">
-        <div class="col-xs-2 text-left" ng-repeat="item in aboutctrl.firstCipher">
+        <div class="col-xs-3 text-left" ng-repeat="item in aboutctrl.firstCipher">
           {{item[0]}} : {{item[1]}}
         </div>
       </div>
@@ -86,7 +86,7 @@
   <div class="row">
     <div class="col-xs-12">
       <h1>About Simon</h1>
-      <p>Hi, I'm Simon. I'm a software engineer living in SF. I like making small projects like this to try new things and stay sharp. This site presented a bunch of fun little challenges. Simulated annealing turned out to be the easiest thing about this little app. The real challenge was baking the Python code into Meteor via Node, having it stream data, and break nicely (yikes!). There are always things to append and modify in any project, and I've decided this one is done enough to publish and maybe come back to when I have a sec.</p>
+      <p>Hi, I'm Simon. I'm a software engineer living in SF. I like making small projects like this to try new things and stay sharp. This site presented a bunch of fun little challenges. Simulated annealing turned out to be the easiest thing about this little app. The real challenge was baking Python code into Meteor via Node, having it stream data, and break nicely (yikes!). Even after that worked, Meteor's hosting won't run python scripts. So I built a Flask server on Heroku to run the simulated annealing and connected it to Meteor via DDP. But that didn't work in production either because Meteor's hosting has variable DDP connections! In the end, the version you're viewing doesn't even use Python, it uses Coffescript! There are always things to append and modify in any project, and I've decided this one is done enough to publish. Maybe I'll come back to it when I have a sec.</p>
       <br/>
       
       <p>Feel free to contact me at <a href="mailto:srtucker22@gmail.com" target="_blank">srtucker22@gmail.com</a> if you would like to get in touch.</p>
