@@ -10,6 +10,7 @@ aldeed:simple-schema@1.3.0
 angularjs:angular@1.3.14
 angularui:angular-ui-router@0.2.13_3
 application-configuration@1.0.4
+artwells:accounts-guest@0.1.6
 audit-argument-checks@1.0.2
 autoupdate@1.1.5
 base64@1.0.2
@@ -46,7 +47,6 @@ localstorage@1.0.2
 logging@1.0.6
 matb33:collection-hooks@0.7.9
 meteor@1.1.4
-meteor-accounts-guest@0.1.5
 meteor-platform@1.2.1
 meteorhacks:async@1.0.0
 meteorhacks:kadira@2.19.6
