@@ -65,7 +65,7 @@ This site is also a first attempt at combining Meteor best-practices I've learne
 
 The MIT License
 
-Copyright (c) 2015 Glipcode http://angularjs.org
+Copyright (c) 2015 Glipcode http://glipcode.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
