@@ -37,7 +37,29 @@ This site is also a first attempt at combining Meteor best-practices I've learne
 
 ## Installation
 
-Provide code examples and explanations of how to get the project.
+1. Clone the project <code>git clone https://github.com/srtucker22/meteor-cryptogram.git</code>
+2. Go to the primary directory <code>cd meteor-cryptogram</code>
+3. Run meteor to get all the packages <code>meteor</code>
+4. Add a settings.json to the primary directory <code>touch settings.json</code>
+5. Add your personal settings for the following services included in meteor-cryptogram (or remove the ones you don't want)
+
+```
+{
+  "facebook" : {
+    "appId": "YOUR_APP_ID",
+    "secret": "YOUR_APP_SECRET"
+  },
+  "kadira": { 
+    "appId": "YOUR_APP_ID", 
+    "appSecret": "YOUR_APP_SECRET" 
+  },
+  "papertrail" : {
+    "port" : YOUR_PORT_NUMBER
+  }
+}
+```
+6. run the app with the settings <code>meteor --settings settings.json</code>
+7. enjoy!
 
 ## License
 
